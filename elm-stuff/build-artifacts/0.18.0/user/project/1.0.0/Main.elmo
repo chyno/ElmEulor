@@ -1,0 +1,84 @@
+var _user$project$Main$sumsize = 4;
+var _user$project$Main$cubesize = 6;
+var _user$project$Main$positioncalc = F2(
+	function (index, value) {
+		return {
+			ctor: '_Tuple3',
+			_0: index,
+			_1: A2(_elm_lang$core$Basics_ops['%'], index, _user$project$Main$cubesize),
+			_2: value
+		};
+	});
+var _user$project$Main$Cell = F3(
+	function (a, b, c) {
+		return {index: a, col: b, val: c};
+	});
+var _user$project$Main$first = function (items) {
+	var _p0 = _elm_lang$core$List$head(items);
+	if (_p0.ctor === 'Nothing') {
+		return A3(_user$project$Main$Cell, 0, 0, 0);
+	} else {
+		return _p0._0;
+	}
+};
+var _user$project$Main$second = function (items) {
+	var _p1 = items;
+	if ((_p1.ctor === '::') && (_p1._1.ctor === '::')) {
+		return _p1._1._0;
+	} else {
+		return A3(_user$project$Main$Cell, 0, 0, 0);
+	}
+};
+var _user$project$Main$third = function (items) {
+	var _p2 = items;
+	if (((_p2.ctor === '::') && (_p2._1.ctor === '::')) && (_p2._1._1.ctor === '::')) {
+		return _p2._1._1._0;
+	} else {
+		return A3(_user$project$Main$Cell, 0, 0, 0);
+	}
+};
+var _user$project$Main$getRecords = function (items) {
+	return A2(
+		_elm_lang$core$List$map,
+		function (_p3) {
+			var _p4 = _p3;
+			return A3(_user$project$Main$Cell, _p4._0 + 1, _p4._1 + 1, _p4._2);
+		},
+		items);
+};
+var _user$project$Main$data = _user$project$Main$getRecords(
+	A2(
+		_elm_lang$core$List$indexedMap,
+		_user$project$Main$positioncalc,
+		A2(_elm_lang$core$List$range, 1, 36)));
+var _user$project$Main$sumrowvalues = function (cll) {
+	var itemstosum = A2(
+		_elm_lang$core$List$filter,
+		function (x) {
+			return (_elm_lang$core$Native_Utils.cmp(x.index, cll.index) > -1) && (_elm_lang$core$Native_Utils.cmp(x.index, cll.index + _user$project$Main$sumsize) < 0);
+		},
+		_user$project$Main$data);
+	return _elm_lang$core$List$sum(
+		A2(
+			_elm_lang$core$List$map,
+			function (y) {
+				return y.val;
+			},
+			itemstosum));
+};
+var _user$project$Main$getrowcells = function (cell) {
+	return A2(
+		_elm_lang$core$List$map,
+		_user$project$Main$sumrowvalues,
+		A2(
+			_elm_lang$core$List$filter,
+			function (x) {
+				return (_elm_lang$core$Native_Utils.cmp(x.index, cell.index) > -1) && (_elm_lang$core$Native_Utils.cmp(x.col, _user$project$Main$cubesize - _user$project$Main$sumsize) < 1);
+			},
+			_user$project$Main$data));
+};
+var _user$project$Main$main = _elm_lang$virtual_dom$Native_VirtualDom.staticProgram(
+	_elm_lang$html$Html$text(
+		_elm_lang$core$Basics$toString(
+			_user$project$Main$getrowcells(
+				_user$project$Main$first(_user$project$Main$data)))));
