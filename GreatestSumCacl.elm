@@ -14,33 +14,54 @@ data = List.range 1 (cubesize^2) |> List.indexedMap (\ a b -> (a + 1, b))
 --
 rowsumitem : (Int, Int) ->  Int
 rowsumitem (index, val) =
-  List.range index (index + 4) |>
+  List.range index (index + sumsize - 1) |>
   itemsinrange  |>
   List.map (\ (a, b)-> b ) |> 
   List.sum
 
+diagsumitem : (Int, Int) ->  Int
+diagsumitem (index, val) =
+  List.range index (index + 3) |>
+  diagonalindexes |>
+  itemsinrange  |>
+  List.map getvalue |> 
+  List.sum
 
-digitpositioncalc : Int -> Int -> Int
-digitpositioncalc index digitpos = 
-  (digitpos * cubesize)  +  index + digitpos
+
+digitpositioncalc : (Int,  Int) -> Int
+digitpositioncalc ( digitpos, index) = 
+  (digitpos * cubesize)  +  index 
 
 
-sumsofsets : List (Int, Int) -> List Int
-sumsofsets d =
+diagonalindexes : List Int -> List Int
+diagonalindexes indexs = 
+  indexs |>
+  List.indexedMap (\ a b -> (a , b)) |>  
+  List.map digitpositioncalc
+
+sumsofsetsh : List (Int, Int) -> List (Int)
+sumsofsetsh d =
   d |>
   List.filter (\ (index, val) ->  validcell index)  |>
-  rowsumitem
+  List.map rowsumitem
+
+sumsofsetsv : List (Int, Int) -> List (Int)
+sumsofsetsv d =
+  d |>
+  List.filter (\ (index, val) ->  validcell index)  |>
+  List.map diagsumitem
+--  List.map rowsumitem
  
 
 answer : Int
 answer = 
-  data
-  sumsofsets |> 
+  data |>
+  (\d -> List.append (sumsofsetsh d) (sumsofsetsv d) ) |> 
   List.maximum  |>
   valueorzero
 
 main = 
-  text (toString (ans))
+  text (toString (answer))
 
 
 -- Helper methods
@@ -58,5 +79,18 @@ itemsinrange items =
   List.filter(
      \(index, value) -> 
          items |>
-         List.any(\x > x = index)
+         List.any(\x -> x == index)
   )
+
+valueorzero : Maybe Int -> Int
+valueorzero ans =
+  case ans of
+       Nothing -> 0
+       Just x -> x
+
+getvalue : (Int, Int) -> Int
+getvalue (index, value) =
+  if index <= (cubesize ^2) then
+    value
+  else
+   0
