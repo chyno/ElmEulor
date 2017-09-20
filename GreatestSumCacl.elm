@@ -50,7 +50,7 @@ diagonalindexes : List Int -> List Int
 diagonalindexes indexs = 
   indexs |>
   List.indexedMap (\ a b -> (a , b)) |>  
-  List.map digitpositioncalc
+  List.map  
 
 prodsofsetsh : List (Int, Int) -> List (Int)
 prodsofsetsh d =
