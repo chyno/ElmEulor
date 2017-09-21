@@ -12,7 +12,7 @@ rows = 10
 cols : Int
 cols = 20
 
- 
+
 data : List (List Int)
 data = 
  [
@@ -37,24 +37,64 @@ data =
     [20, 73, 35, 29, 78, 31, 90, 01, 74, 31, 49, 71, 48, 86, 81, 16, 23, 57, 05, 54],
     [01, 70, 54, 71, 83, 51, 54, 69, 16, 92, 33, 48, 61, 43, 52, 01, 89, 19, 67, 48]
  ]
+arrayData : Array2D.Array2D Int
+arrayData =
+  Array2D.fromList data
 
-cellVal : Int -> Int -> Int
-cellVal row col =
+ 
+cellValFormInd : Int -> Int -> Int
+cellValFormInd row col =
   let
-    cell =   Array2D.get  row col data
-  in    
-  case cell of
-    Maybe.Nothing ->
-      1
-    Just val ->
-     val
-    
+      cell = Array2D.get row col arrayData
+  in
+    case cell of
+      Just val ->
+        val
+      _ ->
+        1
       
-sumArr : Int -> Int ->  Int
-sumArr row col =
+      
+maxCellVal : Int  -> Int ->  Int
+maxCellVal  row col =
   let
-      accrosssum = (cellVal row col) * (cellVal row (col + 1)) * (cellVal row (col + 2)) * (cellVal row (col + 3))
+      accrosssum = (cellValFormInd row col) * (cellValFormInd row (col + 1)) * (cellValFormInd row (col + 2)) * (cellValFormInd row (col + 3))
+      downsum = (cellValFormInd row col) * (cellValFormInd (row + 1) col) * (cellValFormInd (row + 2) col) * (cellValFormInd (row + 3) col)
+      diagrsum = (cellValFormInd row col) * (cellValFormInd (row + 1) (col + 1)) * (cellValFormInd (row + 2) (col + 2)) * (cellValFormInd (row + 3) (col + 3))
+      diaglsum = (cellValFormInd row col) * (cellValFormInd (row - 1) (col + 1)) * (cellValFormInd (row - 2) (col + 2)) * (cellValFormInd (row - 3) (col + 3))
    in
-     accrosssum 
+     case (List.maximum  (accrosssum::downsum::diagrsum::[diaglsum])) of
+       Just val ->
+         val
+       _ ->
+         0
+ 
+     
+      
+
+convertolist : Maybe (Array.Array Int) -> List Int
+convertolist mrow =
+   case mrow of
+      Just val ->
+        (Array.toList val)
+      _ ->
+        []
+
+converttwodtolist : Array2D.Array2D  Int -> List Int 
+converttwodtolist arr2d =
+  let
+       rows = List.range 0 ((Array2D.rows arr2d) - 1)
+       getrow =  (\ rowid  -> Array2D.getRow rowid arr2d)
+  in
+      List.map (\rowid -> convertolist (getrow rowid)) rows |>
+      List.concat
+  
+     
+--maxVal : a
+maxVal =
+  let     
+      maxTwoDVals =  Array2D.indexedMap (\row col cell -> (maxCellVal row col))  
+  in
+   arrayData |> maxTwoDVals |>  converttwodtolist |> List.maximum
+   
 main =
-  text (toString  (sumArr 2 3))
+  text (toString  (maxVal ))
