@@ -45,16 +45,17 @@ runner nfactors =
 endfactorcount : Int
 endfactorcount = 6
 
-triagfactcount : Int -> List (Int, Int) -> Int
-triagfactcount cval items = 
+triagfactcount : Int -> Int ->  List (Int, Int) -> Int
+triagfactcount cval ccount items = 
   let
       res = 
         List.filter
            /(val, numfac) -> 
-             val == cval
-      
+             val == cval     
   in
-      
+     if (cval == )
+     case res of  
+       just v
 
 runnerv2 : Int -> Int -> List (Int, Int) -> Int
 runnerv2 nthtrinum prevtriagnum prevTriagsAndCounts =
