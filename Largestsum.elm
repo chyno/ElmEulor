@@ -1,6 +1,4 @@
-module ProblemThirteen exposing (runner)
-
-import Html exposing (text)
+module Largestsum exposing (runner)
 import ProblemThirteen exposing (data)
  
 chunck : Int
@@ -39,10 +37,8 @@ addnum  stritems  cursum =
            (List.map leftoverstring stritems)
            (List.map nextchunck stritems |> List.sum |> (+) toaddon)
  
-
 runner :  String
 runner  = 
    addnum data 0 |> toString |>  String.left 10  
 
-main =
-  text (toString  (runner))
+ 
