@@ -1,3 +1,5 @@
+module ProblemThirteen exposing (runner)
+
 import Html exposing (text)
 import ProblemThirteen exposing (data)
  
