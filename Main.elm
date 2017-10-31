@@ -1,4 +1,5 @@
 import Html exposing (text)
+import Lib exposing (..)
 --import Largestsum exposing (runner)
 {-
 
@@ -8,49 +9,39 @@ The sum of the primes below 10 is 2 + 3 + 5 + 7 = 17.
 Find the sum of all the primes below two million.
 
 -}
-maxprime : Int
-maxprime = 100000
 
-addnewnumbestoskip : List Int -> Int -> List Int
-addnewnumbestoskip curnumbs primenum fact =
+ 
+
+data : List Int
+data = List.range 2 100000
+
+              
+newcanidates : Int -> List Int -> List Int -> List Int
+newcanidates newprime primes canidates =
   let
-      primenumfact = primenum * fact
+      prmtest =  
+        if (List.length primes) > 0 then
+          primes
+        else [1]
+  in
+    List.filter (\x -> (x % newprime) > 0) canidates 
+  
+ 
+findprimes :  List Int -> List Int  -> Trampoline List Int
+findprimes  primes canidates = 
+  let
+      nextnum = nextval canidates
+    
   in
     
-  if (primenumfact >= maxprime) then
-    curnumbs
-  else
-    addnewnumbestoskip primenumfact::curnumbs primenum  (fact + 1)
-
-getnextnumber : List Int -> Int -> Int
-getnextnumber toskip val =
-  42
-
-isnotprime : List Int -> List Int -> Int -> Bool
-isnotprime primes numstoskip  num = 
-  let
-      isdiv = \x -> ((num % x) == 0)
-  in
-     List.member num numstoskip &&
-     List.any isdiv primes 
-
-startprimes : List Int
-startprimes = [2,3,7]
-
-primeslist  : List Int ->List Int -> Int -> List Int
-primeslist primes numberstoskip num = 
-  let
-      nextnumber = getnextnumber numberstoskip num
-  in
-
-  if num >= maxprime then
+  if (List.isEmpty canidates) then
+    Debug.log "Done!!" 
     primes
   else
-    if (isnotprime primes numberstoskip num) then
-      primeslist  primes numberstoskip nextnumber
-    else
-      primeslist  (num::primes) (addnewnumbestoskip numbersstoskip num) nextnumber
-      
-
+    Debug.log ("****Found Prime!! - " ++   (toString nextnum))
+    --Debug.log ("Canidate Count : " ++   (toString (nextcands |> List.length)))
+    findprimes  (nextnum::primes) (newcanidates nextnum primes canidates)
+    
+ 
 main =
-  text (toString  ( primeslist [2] 3))
+  text (toString  ( findprimes [] data ))
