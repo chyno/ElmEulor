@@ -37,7 +37,7 @@ type alias Tally =
  }
 
 maxstart : Int
-maxstart = 100
+maxstart = 10000
 
 evencalc : Int -> Int
 evencalc x =  (toFloat x) / 2
@@ -53,19 +53,22 @@ existingseq x items =
       
 candidatecountcalc :  List Seqcount -> Int -> Int
 candidatecountcalc  items x =
+     --Debug.log ("candidatecountcalc. Value: " ++ (toString x))
      candidatecountcalcr  items x 0
 
 candidatecountcalcr :  List Seqcount -> Int -> Int -> Int
 candidatecountcalcr   items x curcount =
   if x == 1 then
-    curcount
+     --Debug.log ("Never found match. Count is  -- " ++ (toString (curcount + 1)))
+    (curcount + 1)
   else
     let
         maybetally = (existingseq x items)
     in
       case maybetally of
         Just t ->
-           t.count
+          -- Debug.log ("Found a match. done counting.   -- " ++ (toString x))
+          (t.count + curcount)
         _ ->
           let
               fnnextcount = 
@@ -74,8 +77,16 @@ candidatecountcalcr   items x curcount =
                else
                   (oddcalc x)       
           in
+             -- Debug.log ("Value not found ... Lets keep keep searching with  " ++ ( toString fnnextcount))
              (candidatecountcalcr items fnnextcount (curcount + 1))
-              
+
+emptytally : Tally
+emptytally =
+  {
+    curmax = 0,
+    seqcounts = [] 
+  }
+
 tallycalc : Int -> Tally -> Tally
 tallycalc x tl =
   let
@@ -84,7 +95,7 @@ tallycalc x tl =
   in
     case maybetally of
       Just t ->
-         tl 
+        tl 
       _ ->
         let
             candidatecount = (candidatecountcalc  tl.seqcounts x)
@@ -92,22 +103,22 @@ tallycalc x tl =
               if candidatecount > tl.curmax then
                 candidatecount
               else
-                tl.curmax
-               
+                tl.curmax      
         in
-            
-        {tl | 
-          curmax = newmax,
-          seqcounts = {
-            val = x
-            , count = candidatecount
-          }::tl.seqcounts 
-         }
-         
+          {tl | 
+            curmax = newmax,
+            seqcounts = {
+              val = x
+              , count = candidatecount
+            }::tl.seqcounts 
+          }
 
- 
+runner : Tally
+runner = 
+  List.range 1 maxstart |> List.foldl tallycalc emptytally
+
 main =
-  text ( existingseq 0 []  |> toString)
+  text ( runner  |> toString)
 
   {-
 
